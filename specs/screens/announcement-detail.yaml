@@ -1,0 +1,87 @@
+version: "2.0"
+
+screen:
+  name: 공고 상세
+  route: /matching/:id
+  layout: full-width
+  auth: false
+
+data_requirements:
+  - resource: match_results
+    needs: [match_score, match_reason]
+  - resource: announcements
+    needs: [title, organization, deadline, content, ai_summary, attachments, detail_url]
+
+components:
+  - id: header_info
+    type: detail
+    position: main
+    function: 공고명 + 공고기관 + 마감일 표시
+    data_source:
+      resource: announcements
+
+  - id: score_gauge
+    type: stat-card
+    position: main
+    function: 적합도 점수 원형 프로그래스 바 + 분석 근거 텍스트
+    data_source:
+      resource: match_results
+
+  - id: ai_summary_section
+    type: text
+    position: main
+    function: AI 요약 결과 표시 (접힘/펼침)
+    data_source:
+      resource: announcements
+
+  - id: full_content
+    type: text
+    position: main
+    function: 공고 전문 표시 (접힘/펼침, 기본 접힘)
+    data_source:
+      resource: announcements
+
+  - id: attachments_list
+    type: list
+    position: main
+    function: 첨부파일 목록 (파일명 + 다운로드 버튼)
+    data_source:
+      resource: announcements
+    events:
+      - on: click:download
+        do: 첨부파일 다운로드
+
+  - id: report_download_button
+    type: button
+    position: main
+    function: 매칭 분석 보고서 PDF 다운로드
+    events:
+      - on: click
+        do: PDF 생성 요청 → 다운로드
+
+  - id: consult_button
+    type: button
+    position: main
+    function: 전문가 연결 CTA 버튼 (하단 고정)
+    events:
+      - on: click
+        do: /consult/:announcementId로 이동
+
+connections:
+  navigations:
+    - from: consult_button
+      to: /consult/:announcementId
+
+tests:
+  - name: 상세 정보 로드
+    when: 매칭 목록에서 카드 탭
+    then: [공고명/기관/마감일 표시, 적합도 점수 게이지, AI 요약 표시]
+  - name: 첨부파일 다운로드
+    when: 첨부파일 다운로드 탭
+    then: [파일 다운로드 시작]
+  - name: 보고서 다운로드
+    when: 보고서 다운로드 버튼 탭
+    then: [PDF 생성 로딩, 다운로드 완료]
+  - name: 전문가 연결
+    when: 전문가 연결 버튼 탭
+    then: [/consult/:announcementId로 이동]

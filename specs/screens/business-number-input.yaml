@@ -1,0 +1,50 @@
+version: "2.0"
+
+screen:
+  name: 사업자번호 입력
+  route: /register
+  layout: full-width
+  auth: false
+
+data_requirements:
+  - resource: company_profile
+    needs: [business_number, company_name]
+
+components:
+  - id: business_number_input
+    type: input
+    position: main
+    function: 사업자번호 10자리 입력 (숫자만, 자동 하이픈)
+    events:
+      - on: input
+        do: 10자리 입력 시 조회 버튼 활성화
+
+  - id: lookup_button
+    type: button
+    position: main
+    function: 공공API로 기업정보 조회
+    data_source:
+      resource: company_profile
+    events:
+      - on: click
+        do: POST /api/v1/company/lookup 호출, 로딩 표시
+      - on: success
+        do: /profile/edit로 이동 (기업정보 전달)
+      - on: error
+        do: 에러 메시지 표시 (유효하지 않은 번호 / API 실패)
+
+connections:
+  navigations:
+    - from: lookup_button
+      to: /profile/edit
+
+tests:
+  - name: 유효한 사업자번호 입력
+    when: 10자리 숫자 입력 후 조회 탭
+    then: [로딩 인디케이터 표시, 성공 시 /profile/edit 이동]
+  - name: 유효하지 않은 번호
+    when: 잘못된 형식 입력
+    then: [에러 메시지 표시, 조회 버튼 비활성화]
+  - name: API 실패
+    when: 공공API 응답 실패
+    then: [에러 알림 표시, 재시도 버튼 표시]

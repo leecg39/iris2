@@ -1,0 +1,54 @@
+# 공통 컴포넌트 정의
+version: "2.0"
+
+shared_components:
+  - id: bottom_tab_bar
+    type: navigation
+    function: 하단 탭바 (홈/매칭/보고서/설정)
+    used_in: [home, matching-list, reports, settings]
+
+  - id: match_score_gauge
+    type: stat-card
+    function: 적합도 점수 원형 프로그래스 바 (0-100%, 색상 그라데이션)
+    used_in: [home, matching-list, announcement-detail]
+    props:
+      score: number
+      size: { sm: 40, md: 64, lg: 120 }
+
+  - id: match_card
+    type: card
+    function: 매칭 결과 카드 (공고명 + 적합도 게이지 + D-day 뱃지 + 기관명)
+    used_in: [home, matching-list]
+    props:
+      title: string
+      score: number
+      deadline: date
+      organization: string
+
+  - id: dday_badge
+    type: text
+    function: 마감 D-day 뱃지 (D-3 이하 빨강, D-7 이하 노랑, 그 외 회색)
+    used_in: [home, matching-list, announcement-detail]
+    props:
+      deadline: date
+
+  - id: loading_indicator
+    type: text
+    function: 로딩 스피너 (API 호출, 분석 대기)
+    used_in: [business-number-input, matching-list, announcement-detail]
+
+  - id: empty_state
+    type: text
+    function: 빈 상태 안내 (아이콘 + 메시지)
+    used_in: [matching-list, reports]
+    props:
+      icon: string
+      message: string
+
+  - id: tag_input
+    type: input
+    function: 태그 형태 입력 (추가/삭제 가능)
+    used_in: [company-profile]
+    props:
+      tags: "string[]"
+      placeholder: string

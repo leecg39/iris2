@@ -1,0 +1,63 @@
+version: "2.0"
+
+screen:
+  name: 전문가 상담 폼
+  route: /consult/:announcementId
+  layout: full-width
+  auth: false
+
+data_requirements:
+  - resource: company_profile
+    needs: [company_name, business_number]
+  - resource: announcements
+    needs: [title]
+  - resource: match_results
+    needs: [match_score]
+  - resource: consult_requests
+    needs: [requester_name, email, phone, message]
+
+components:
+  - id: auto_filled_info
+    type: detail
+    position: main
+    function: 자동채움 영역 (회사명, 사업자번호, 공고명, 적합도 점수)
+    data_source:
+      resource: company_profile
+
+  - id: consult_form
+    type: form
+    position: main
+    function: 사용자 입력 폼 (이름, 이메일, 연락처, 문의내용)
+    data_source:
+      resource: consult_requests
+    events:
+      - on: submit
+        do: POST /api/v1/consultation/submit → Notion DB 저장 + 확인 이메일 발송
+      - on: success
+        do: 성공 다이얼로그 표시 ("이메일로 확인 메일이 발송되었습니다")
+      - on: error
+        do: 에러 메시지 표시
+
+  - id: success_dialog
+    type: modal
+    position: overlay
+    function: 제출 성공 확인 다이얼로그
+    events:
+      - on: click:confirm
+        do: 공고 상세 화면으로 복귀
+
+connections:
+  navigations:
+    - from: success_dialog
+      to: /matching/:id
+
+tests:
+  - name: 자동채움 확인
+    when: 공고 상세에서 전문가 연결 탭
+    then: [회사명/사업자번호/공고명/적합도 자동 표시]
+  - name: 폼 제출
+    when: 필수 항목 입력 후 제출
+    then: [Notion DB 저장, 확인 이메일 발송, 성공 다이얼로그]
+  - name: 필수 항목 누락
+    when: 이메일 미입력 후 제출
+    then: [유효성 에러 표시, 제출 차단]

@@ -1,0 +1,23 @@
+# IRIS 자동 매칭 앱 - 화면 인덱스
+version: "2.0"
+
+app:
+  name: IRIS 정부지원사업 자동 매칭
+  platform: flutter
+  navigation: bottom_tab_bar
+  tabs:
+    - { id: home, label: 홈, icon: home }
+    - { id: matching, label: 매칭, icon: search }
+    - { id: reports, label: 보고서, icon: description }
+    - { id: settings, label: 설정, icon: settings }
+
+screens:
+  - { file: onboarding.yaml, route: /onboarding, tab: null }
+  - { file: business-number-input.yaml, route: /register, tab: null }
+  - { file: company-profile.yaml, route: /profile/edit, tab: null }
+  - { file: home.yaml, route: /, tab: home }
+  - { file: matching-list.yaml, route: /matching, tab: matching }
+  - { file: announcement-detail.yaml, route: /matching/:id, tab: null }
+  - { file: consult-form.yaml, route: /consult/:announcementId, tab: null }
+  - { file: reports.yaml, route: /reports, tab: reports }
+  - { file: settings.yaml, route: /settings, tab: settings }

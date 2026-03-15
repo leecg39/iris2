@@ -1,0 +1,59 @@
+version: "2.0"
+
+screen:
+  name: 매칭 목록
+  route: /matching
+  layout: full-width
+  auth: false
+
+data_requirements:
+  - resource: match_results
+    needs: [id, match_score, match_reason, announcement_title, announcement_org, announcement_deadline]
+    filters: { keyword: "?keyword", status: "?status", sort: "?sort" }
+
+components:
+  - id: search_filter_bar
+    type: filter-form
+    position: header
+    function: 키워드 검색 + 필터(진행중만/기간) + 정렬(적합도순/마감일순/최신순)
+    events:
+      - on: submit
+        do: 필터 적용하여 매칭 결과 재조회
+      - on: click:reset
+        do: 필터 초기화
+
+  - id: match_card_list
+    type: list
+    position: main
+    function: 매칭 결과 카드 목록 (공고명 + 적합도% 게이지 + D-day 뱃지 + 기관명)
+    data_source:
+      resource: match_results
+    events:
+      - on: click:card
+        do: /matching/:id 공고 상세로 이동
+      - on: scroll:end
+        do: 다음 페이지 로드
+
+  - id: empty_state
+    type: text
+    position: main
+    function: 매칭 결과가 없을 때 안내 메시지
+
+connections:
+  navigations:
+    - from: match_card_list
+      to: /matching/:id
+
+tests:
+  - name: 매칭 목록 로드
+    when: 매칭 탭 진입
+    then: [매칭 카드 목록 표시, 적합도순 기본 정렬]
+  - name: 필터링
+    when: 진행중만 필터 선택
+    then: [마감된 공고 제외, 결과 수 갱신]
+  - name: 공고 상세 이동
+    when: 매칭 카드 탭
+    then: [/matching/:id로 이동, 상세 정보 표시]
+  - name: 빈 결과
+    when: 매칭 결과 없음
+    then: [빈 상태 메시지 표시]

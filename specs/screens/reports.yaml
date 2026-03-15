@@ -1,0 +1,43 @@
+version: "2.0"
+
+screen:
+  name: 보고서
+  route: /reports
+  layout: full-width
+  auth: false
+
+data_requirements:
+  - resource: reports
+    needs: [id, announcement_title, match_score, pdf_url, created_at]
+
+components:
+  - id: report_list
+    type: list
+    position: main
+    function: 다운로드한 보고서 목록 (공고명 + 적합도 + 생성일 + PDF 아이콘)
+    data_source:
+      resource: reports
+    events:
+      - on: click:item
+        do: PDF 뷰어 열기 또는 공유 시트
+      - on: click:share
+        do: 공유 시트 표시
+
+  - id: empty_state
+    type: text
+    position: main
+    function: 보고서가 없을 때 안내 ("아직 보고서가 없습니다")
+
+connections:
+  navigations: []
+
+tests:
+  - name: 보고서 목록 표시
+    when: 보고서 탭 진입
+    then: [보고서 목록 최신순 표시]
+  - name: PDF 열기
+    when: 보고서 항목 탭
+    then: [PDF 뷰어 열기]
+  - name: 빈 상태
+    when: 보고서 없음
+    then: [빈 상태 메시지 표시]

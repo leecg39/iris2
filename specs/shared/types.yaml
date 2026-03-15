@@ -1,0 +1,39 @@
+# 공통 타입 정의
+version: "2.0"
+
+types:
+  MatchScore:
+    description: 적합도 점수
+    type: number
+    min: 0
+    max: 100
+    display:
+      high: { threshold: 80, color: "#2E7D32" }    # 초록
+      medium: { threshold: 50, color: "#FF6D00" }   # 오렌지
+      low: { threshold: 0, color: "#757575" }        # 회색
+
+  DeadlineStatus:
+    description: 마감일 상태
+    type: string
+    enum: [urgent, soon, normal, expired]
+    display:
+      urgent: { condition: "D-3 이하", color: "#C62828" }   # 빨강
+      soon: { condition: "D-7 이하", color: "#F9A825" }     # 노랑
+      normal: { condition: "D-7 초과", color: "#757575" }   # 회색
+      expired: { condition: "마감", color: "#BDBDBD" }       # 연회색
+
+  AnnouncementStatus:
+    description: 공고 상태
+    type: string
+    enum: [진행중, 마감]
+
+  ConsultStatus:
+    description: 상담 신청 상태
+    type: string
+    enum: [접수, 진행중, 완료]
+
+  BusinessNumber:
+    description: 사업자번호
+    type: string
+    pattern: "^\\d{10}$"
+    display: "000-00-00000"

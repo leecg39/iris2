@@ -1,0 +1,59 @@
+version: "2.0"
+
+screen:
+  name: 기업 프로필 설정
+  route: /profile/edit
+  layout: full-width
+  auth: false
+
+data_requirements:
+  - resource: company_profile
+    needs: [company_name, ceo_name, industry, revenue, employee_count, address, research_fields, tech_keywords]
+
+components:
+  - id: auto_filled_section
+    type: form
+    position: main
+    function: 공공API 조회 결과 자동채움 (회사명, 대표자, 업종, 매출, 직원수, 소재지)
+    data_source:
+      resource: company_profile
+
+  - id: research_fields_input
+    type: select
+    position: main
+    function: 연구분야 멀티셀렉트 입력
+    events:
+      - on: select
+        do: 연구분야 태그 추가/삭제
+
+  - id: tech_keywords_input
+    type: input
+    position: main
+    function: 기술 키워드 태그 입력 (자유 입력)
+    events:
+      - on: submit:tag
+        do: 키워드 태그 추가
+
+  - id: save_button
+    type: button
+    position: main
+    function: 프로필 저장 후 홈으로 이동
+    events:
+      - on: click
+        do: PUT /api/v1/company/profile → 성공 시 / (홈)으로 이동
+
+connections:
+  navigations:
+    - from: save_button
+      to: /
+
+tests:
+  - name: 자동채움 표시
+    when: 사업자번호 조회 성공 후 진입
+    then: [회사명/대표자/업종 등 자동 표시]
+  - name: 연구분야 추가
+    when: 연구분야 선택
+    then: [선택된 분야 태그로 표시]
+  - name: 프로필 저장
+    when: 저장 버튼 탭
+    then: [Notion DB 저장, 홈으로 이동]

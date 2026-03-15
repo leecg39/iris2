@@ -1,0 +1,67 @@
+version: "2.0"
+
+screen:
+  name: 설정
+  route: /settings
+  layout: full-width
+  auth: false
+
+data_requirements:
+  - resource: company_profile
+    needs: [company_name, business_number]
+
+components:
+  - id: profile_section
+    type: card
+    position: main
+    function: 기업 프로필 요약 카드 (회사명 + 사업자번호 + 편집 버튼)
+    data_source:
+      resource: company_profile
+    events:
+      - on: click:edit
+        do: /profile/edit로 이동
+
+  - id: notification_toggle
+    type: toggle
+    position: main
+    function: 자동 검색 알림 ON/OFF
+    events:
+      - on: toggle
+        do: 알림 설정 저장
+
+  - id: search_interval
+    type: select
+    position: main
+    function: 자동 검색 주기 설정 (1시간/6시간/매일)
+    events:
+      - on: select
+        do: 검색 주기 저장
+
+  - id: app_info
+    type: text
+    position: main
+    function: 앱 버전 정보 표시
+
+  - id: reset_button
+    type: button
+    position: main
+    function: 데이터 초기화 (확인 다이얼로그 포함)
+    events:
+      - on: click
+        do: 확인 다이얼로그 → 데이터 초기화 → 온보딩으로 이동
+
+connections:
+  navigations:
+    - from: profile_section
+      to: /profile/edit
+
+tests:
+  - name: 설정 화면 표시
+    when: 설정 탭 진입
+    then: [프로필 요약 표시, 알림 설정 표시, 앱 정보 표시]
+  - name: 프로필 편집
+    when: 편집 버튼 탭
+    then: [/profile/edit로 이동]
+  - name: 데이터 초기화
+    when: 초기화 버튼 → 확인
+    then: [모든 데이터 삭제, 온보딩으로 이동]

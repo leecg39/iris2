@@ -1,0 +1,44 @@
+version: "2.0"
+
+screen:
+  name: 온보딩
+  route: /onboarding
+  layout: full-width
+  auth: false
+
+data_requirements: []
+
+components:
+  - id: onboarding_pager
+    type: carousel
+    position: main
+    function: 앱 소개 3페이지 슬라이드 (소개/기능안내/시작)
+    events:
+      - on: swipe
+        do: 다음/이전 페이지로 이동
+      - on: click:skip
+        do: 사업자번호 입력 화면으로 이동
+
+  - id: start_button
+    type: button
+    position: main
+    function: 마지막 페이지에서 시작하기 버튼
+    events:
+      - on: click
+        do: /register로 이동
+
+connections:
+  navigations:
+    - from: start_button
+      to: /register
+
+tests:
+  - name: 온보딩 슬라이드
+    when: 앱 최초 실행
+    then: [3페이지 슬라이드 표시, 페이지 인디케이터 표시]
+  - name: 시작하기
+    when: 마지막 페이지에서 시작하기 탭
+    then: [/register로 이동]
+  - name: 건너뛰기
+    when: 건너뛰기 탭
+    then: [/register로 이동]
