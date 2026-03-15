@@ -1,5 +1,8 @@
+# @TASK P0-T0.2 - FastAPI application entry point
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.routers import announcement, company, consult, match, report
 
 app = FastAPI(
     title="IRIS 자동 매칭 API",
@@ -14,6 +17,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# --- Routers ---
+app.include_router(company.router)
+app.include_router(announcement.router)
+app.include_router(match.router)
+app.include_router(consult.router)
+app.include_router(report.router)
 
 
 @app.get("/health")

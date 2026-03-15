@@ -68,19 +68,19 @@ flowchart TD
 
 ## Phase 0: 프로젝트 셋업
 
-### [ ] P0-T0.1: Flutter 프로젝트 초기화
+### [x] P0-T0.1: Flutter 프로젝트 초기화
 - **담당**: frontend-specialist
 - **파일**: `pubspec.yaml`, `lib/main.dart`
 - **스펙**: Flutter 프로젝트 생성, 의존성 설치 (dio, riverpod, go_router, pdf)
 - **TDD**: N/A (셋업)
 
-### [ ] P0-T0.2: FastAPI 백엔드 초기화
+### [x] P0-T0.2: FastAPI 백엔드 초기화
 - **담당**: backend-specialist
 - **파일**: `backend/requirements.txt`, `backend/main.py`, `backend/app/config.py`
 - **스펙**: FastAPI 프로젝트 구조 생성, 의존성 설치 (fastapi, uvicorn, httpx, beautifulsoup4, openai, notion-client)
 - **TDD**: N/A (셋업)
 
-### [ ] P0-T0.3: 환경변수 및 설정
+### [x] P0-T0.3: 환경변수 및 설정
 - **담당**: backend-specialist
 - **파일**: `backend/.env.example`, `backend/app/config.py`
 - **스펙**: OPENAI_API_KEY, NOTION_API_TOKEN, NOTION_DB_*_ID, SMTP 설정 템플릿
