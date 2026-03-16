@@ -92,7 +92,7 @@ flowchart TD
 
 ### P1-R1: Notion DB 연결 Resource
 
-#### [ ] P1-R1-T1: Notion DB 클라이언트 구현
+#### [x] P1-R1-T1: Notion DB 클라이언트 구현
 - **담당**: backend-specialist
 - **리소스**: notion_db (공통)
 - **엔드포인트**: N/A (내부 서비스)
@@ -104,7 +104,7 @@ flowchart TD
 
 ### P1-S0: 공통 레이아웃
 
-#### [ ] P1-S0-T1: 하단 탭바 + 라우팅 구현
+#### [x] P1-S0-T1: 하단 탭바 + 라우팅 구현
 - **담당**: frontend-specialist
 - **화면**: 전체 (공통)
 - **컴포넌트**: BottomTabBar, AppRouter
@@ -114,14 +114,14 @@ flowchart TD
 - **TDD**: RED → GREEN → REFACTOR
 - **데모**: 탭 전환 동작
 
-#### [ ] P1-S0-T2: 디자인 시스템 토큰 적용
+#### [x] P1-S0-T2: 디자인 시스템 토큰 적용
 - **담당**: frontend-specialist
 - **파일**: `lib/core/theme/app_theme.dart`, `lib/core/theme/colors.dart`, `lib/core/theme/typography.dart`
 - **스펙**: 05-design-system.md 기반 컬러/타이포/간격 토큰 정의
 - **Worktree**: `worktree/phase-1-common`
 - **TDD**: RED → GREEN → REFACTOR
 
-#### [ ] P1-S0-T3: 공통 위젯 구현
+#### [x] P1-S0-T3: 공통 위젯 구현
 - **담당**: frontend-specialist
 - **컴포넌트**: MatchScoreGauge, DdayBadge, MatchCard, EmptyState, LoadingIndicator, TagInput
 - **파일**: `lib/widgets/` 폴더 내 각 위젯
@@ -135,7 +135,7 @@ flowchart TD
 
 ### P2-R1: CompanyProfile Resource
 
-#### [ ] P2-R1-T1: 공공API 기업 조회 서비스 구현
+#### [x] P2-R1-T1: 공공API 기업 조회 서비스 구현
 - **담당**: backend-specialist
 - **리소스**: company_profile
 - **엔드포인트**:
@@ -147,7 +147,7 @@ flowchart TD
 - **TDD**: RED → GREEN → REFACTOR
 - **병렬**: 단독 실행
 
-#### [ ] P2-R1-T2: 기업 프로필 수정 API 구현
+#### [x] P2-R1-T2: 기업 프로필 수정 API 구현
 - **담당**: backend-specialist
 - **리소스**: company_profile
 - **엔드포인트**:
@@ -161,7 +161,7 @@ flowchart TD
 
 ### P2-S1: 온보딩 화면
 
-#### [ ] P2-S1-T1: 온보딩 UI 구현
+#### [x] P2-S1-T1: 온보딩 UI 구현
 - **담당**: frontend-specialist
 - **화면**: /onboarding
 - **컴포넌트**: OnboardingPager, StartButton
@@ -174,7 +174,7 @@ flowchart TD
 
 ### P2-S2: 사업자번호 입력 화면
 
-#### [ ] P2-S2-T1: 사업자번호 입력 UI 구현
+#### [x] P2-S2-T1: 사업자번호 입력 UI 구현
 - **담당**: frontend-specialist
 - **화면**: /register
 - **컴포넌트**: BusinessNumberInput, LookupButton
@@ -187,7 +187,7 @@ flowchart TD
 
 ### P2-S3: 기업 프로필 설정 화면
 
-#### [ ] P2-S3-T1: 프로필 설정 UI 구현
+#### [x] P2-S3-T1: 프로필 설정 UI 구현
 - **담당**: frontend-specialist
 - **화면**: /profile/edit
 - **컴포넌트**: AutoFilledSection, ResearchFieldsInput, TechKeywordsInput, SaveButton
@@ -198,7 +198,7 @@ flowchart TD
 - **TDD**: RED → GREEN → REFACTOR
 - **데모 상태**: loading, normal
 
-#### [ ] P2-S3-V: 프로필 화면 연결점 검증
+#### [x] P2-S3-V: 프로필 화면 연결점 검증
 - **담당**: test-specialist
 - **화면**: /onboarding → /register → /profile/edit → /
 - **검증 항목**:
@@ -213,7 +213,7 @@ flowchart TD
 
 ### P3-R1: Announcements Resource
 
-#### [ ] P3-R1-T1: IRIS 스크래퍼 서비스 구현
+#### [x] P3-R1-T1: IRIS 스크래퍼 서비스 구현
 - **담당**: backend-specialist
 - **리소스**: announcements
 - **엔드포인트**: N/A (내부 서비스)
@@ -224,7 +224,7 @@ flowchart TD
 - **TDD**: RED → GREEN → REFACTOR
 - **병렬**: P3-R1-T2와 병렬 불가
 
-#### [ ] P3-R1-T2: 공고 API 구현
+#### [x] P3-R1-T2: 공고 API 구현
 - **담당**: backend-specialist
 - **리소스**: announcements
 - **엔드포인트**:
@@ -238,7 +238,7 @@ flowchart TD
 
 ### P3-R2: MatchResults Resource
 
-#### [ ] P3-R2-T1: LLM 분석 엔진 구현
+#### [x] P3-R2-T1: LLM 분석 엔진 구현
 - **담당**: backend-specialist
 - **리소스**: match_results
 - **엔드포인트**: N/A (내부 서비스)
@@ -249,7 +249,7 @@ flowchart TD
 - **TDD**: RED → GREEN → REFACTOR
 - **병렬**: P3-R1-T1과 병렬 가능
 
-#### [ ] P3-R2-T2: AI 요약 서비스 구현
+#### [x] P3-R2-T2: AI 요약 서비스 구현
 - **담당**: backend-specialist
 - **리소스**: announcements (ai_summary 필드)
 - **파일**: `backend/tests/test_ai_summary.py` → `backend/app/services/llm_analyzer.py`
@@ -258,7 +258,7 @@ flowchart TD
 - **TDD**: RED → GREEN → REFACTOR
 - **병렬**: P3-R2-T1과 병렬 가능
 
-#### [ ] P3-R2-T3: 매칭 분석 API 구현
+#### [x] P3-R2-T3: 매칭 분석 API 구현
 - **담당**: backend-specialist
 - **리소스**: match_results
 - **엔드포인트**:
@@ -273,7 +273,7 @@ flowchart TD
 
 ### P3-S1: 홈 대시보드 화면
 
-#### [ ] P3-S1-T1: 홈 대시보드 UI 구현
+#### [x] P3-S1-T1: 홈 대시보드 UI 구현
 - **담당**: frontend-specialist
 - **화면**: /
 - **컴포넌트**: GreetingHeader, MatchSummaryCard, DeadlineList, TopMatches
@@ -286,7 +286,7 @@ flowchart TD
 
 ### P3-S2: 매칭 목록 화면
 
-#### [ ] P3-S2-T1: 매칭 목록 UI 구현
+#### [x] P3-S2-T1: 매칭 목록 UI 구현
 - **담당**: frontend-specialist
 - **화면**: /matching
 - **컴포넌트**: SearchFilterBar, MatchCardList, EmptyState
@@ -299,7 +299,7 @@ flowchart TD
 
 ### P3-S3: 공고 상세 화면
 
-#### [ ] P3-S3-T1: 공고 상세 UI 구현
+#### [x] P3-S3-T1: 공고 상세 UI 구현
 - **담당**: frontend-specialist
 - **화면**: /matching/:id
 - **컴포넌트**: HeaderInfo, ScoreGauge, AiSummary, FullContent, AttachmentsList, ReportDownloadButton, ConsultButton
@@ -310,7 +310,7 @@ flowchart TD
 - **TDD**: RED → GREEN → REFACTOR
 - **데모 상태**: loading, normal
 
-#### [ ] P3-S3-V: 매칭 화면 연결점 검증
+#### [x] P3-S3-V: 매칭 화면 연결점 검증
 - **담당**: test-specialist
 - **화면**: / → /matching → /matching/:id
 - **검증 항목**:
@@ -328,7 +328,7 @@ flowchart TD
 
 ### P4-R1: Reports Resource
 
-#### [ ] P4-R1-T1: PDF 보고서 생성 서비스 구현
+#### [x] P4-R1-T1: PDF 보고서 생성 서비스 구현
 - **담당**: backend-specialist
 - **리소스**: reports
 - **파일**: `backend/tests/test_pdf_generator.py` → `backend/app/services/pdf_generator.py`
@@ -337,7 +337,7 @@ flowchart TD
 - **TDD**: RED → GREEN → REFACTOR
 - **병렬**: P4-R2-T1과 병렬 가능
 
-#### [ ] P4-R1-T2: 보고서 API 구현
+#### [x] P4-R1-T2: 보고서 API 구현
 - **담당**: backend-specialist
 - **리소스**: reports
 - **엔드포인트**:
@@ -351,7 +351,7 @@ flowchart TD
 
 ### P4-R2: ConsultRequests Resource
 
-#### [ ] P4-R2-T1: 이메일 발송 서비스 구현
+#### [x] P4-R2-T1: 이메일 발송 서비스 구현
 - **담당**: backend-specialist
 - **리소스**: consult_requests (공통 서비스)
 - **파일**: `backend/tests/test_email.py` → `backend/app/services/email_sender.py`
@@ -360,7 +360,7 @@ flowchart TD
 - **TDD**: RED → GREEN → REFACTOR
 - **병렬**: P4-R1-T1과 병렬 가능
 
-#### [ ] P4-R2-T2: 전문가 상담 신청 API 구현
+#### [x] P4-R2-T2: 전문가 상담 신청 API 구현
 - **담당**: backend-specialist
 - **리소스**: consult_requests
 - **엔드포인트**:
@@ -374,7 +374,7 @@ flowchart TD
 
 ### P4-S1: 보고서 탭 화면
 
-#### [ ] P4-S1-T1: 보고서 목록 UI 구현
+#### [x] P4-S1-T1: 보고서 목록 UI 구현
 - **담당**: frontend-specialist
 - **화면**: /reports
 - **컴포넌트**: ReportList, EmptyState
@@ -387,7 +387,7 @@ flowchart TD
 
 ### P4-S2: 전문가 상담 폼 화면
 
-#### [ ] P4-S2-T1: 전문가 상담 폼 UI 구현
+#### [x] P4-S2-T1: 전문가 상담 폼 UI 구현
 - **담당**: frontend-specialist
 - **화면**: /consult/:announcementId
 - **컴포넌트**: AutoFilledInfo, ConsultForm, SuccessDialog
@@ -400,7 +400,7 @@ flowchart TD
 
 ### P4-S3: 설정 화면
 
-#### [ ] P4-S3-T1: 설정 UI 구현
+#### [x] P4-S3-T1: 설정 UI 구현
 - **담당**: frontend-specialist
 - **화면**: /settings
 - **컴포넌트**: ProfileSection, NotificationToggle, SearchInterval, AppInfo, ResetButton
@@ -411,7 +411,7 @@ flowchart TD
 - **TDD**: RED → GREEN → REFACTOR
 - **데모 상태**: normal
 
-#### [ ] P4-S3-V: 보고서/전문가/설정 연결점 검증
+#### [x] P4-S3-V: 보고서/전문가/설정 연결점 검증
 - **담당**: test-specialist
 - **화면**: /reports, /consult/:id, /settings
 - **검증 항목**:
