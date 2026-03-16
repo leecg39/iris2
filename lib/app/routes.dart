@@ -1,7 +1,6 @@
 // @TASK P1-S0-T1 - go_router 기반 라우팅 설정
 // @SPEC docs/planning/
 
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iris/features/home/home_screen.dart';
 import 'package:iris/features/matching/matching_list_screen.dart';
@@ -9,6 +8,7 @@ import 'package:iris/features/matching/announcement_detail_screen.dart';
 import 'package:iris/features/onboarding/onboarding_screen.dart';
 import 'package:iris/features/profile/profile_edit_screen.dart';
 import 'package:iris/features/profile/register_screen.dart';
+import 'package:iris/features/consultation/consult_form_screen.dart';
 import 'package:iris/features/reports/reports_screen.dart';
 import 'package:iris/features/settings/settings_screen.dart';
 import 'package:iris/widgets/bottom_tab_bar.dart';
@@ -84,21 +84,8 @@ final appRouter = GoRouter(
       path: '/consult/:announcementId',
       builder: (context, state) {
         final announcementId = state.pathParameters['announcementId'] ?? '';
-        return _ConsultPlaceholder(announcementId: announcementId);
+        return ConsultFormScreen(announcementId: announcementId);
       },
     ),
   ],
 );
-
-class _ConsultPlaceholder extends StatelessWidget {
-  const _ConsultPlaceholder({required this.announcementId});
-  final String announcementId;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('전문가 상담 - $announcementId')),
-      body: const Center(child: Text('전문가 상담 (준비 중)')),
-    );
-  }
-}
