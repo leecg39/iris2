@@ -84,6 +84,45 @@ class MatchResultResponse(BaseModel):
     report_url: Optional[str] = Field(None, description="리포트 PDF URL")
 
 
+class AnnouncementListResponse(BaseModel):
+    """공고 목록 페이지네이션 응답."""
+
+    items: list[AnnouncementResponse]
+    total: int
+    page: int
+    page_size: int
+
+
+# --- Match ---
+
+
+class MatchAnalyzeRequest(BaseModel):
+    """매칭 분석 요청."""
+
+    business_number: str = Field(
+        ...,
+        min_length=10,
+        max_length=12,
+        description="사업자등록번호 (10자리, 하이픈 포함 가능)",
+        examples=["123-45-67890"],
+    )
+
+
+class MatchAnalyzeResponse(BaseModel):
+    """매칭 분석 결과 응답."""
+
+    results: list[MatchResultResponse]
+
+
+class MatchResultListResponse(BaseModel):
+    """매칭 결과 목록 페이지네이션 응답."""
+
+    items: list[MatchResultResponse]
+    total: int
+    page: int
+    page_size: int
+
+
 # --- Consult ---
 
 class ConsultRequest(BaseModel):
