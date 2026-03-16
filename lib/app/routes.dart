@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iris/features/home/home_screen.dart';
 import 'package:iris/features/matching/matching_screen.dart';
+import 'package:iris/features/onboarding/onboarding_screen.dart';
+import 'package:iris/features/profile/profile_edit_screen.dart';
+import 'package:iris/features/profile/register_screen.dart';
 import 'package:iris/features/reports/reports_screen.dart';
 import 'package:iris/features/settings/settings_screen.dart';
 import 'package:iris/widgets/bottom_tab_bar.dart';
@@ -57,15 +60,24 @@ final appRouter = GoRouter(
     // ShellRoute 외부 라우트 (탭바 없음)
     GoRoute(
       path: '/onboarding',
-      builder: (context, state) => const _OnboardingPlaceholder(),
+      builder: (context, state) => const OnboardingScreen(),
     ),
     GoRoute(
       path: '/register',
-      builder: (context, state) => const _RegisterPlaceholder(),
+      builder: (context, state) => const RegisterScreen(),
     ),
     GoRoute(
       path: '/profile/edit',
-      builder: (context, state) => const _ProfileEditPlaceholder(),
+      builder: (context, state) => const ProfileEditScreen(
+        companyData: ProfileCompanyData(
+          companyName: '',
+          ceoName: '',
+          industry: '',
+          revenue: 0,
+          employeeCount: 0,
+          address: '',
+        ),
+      ),
     ),
     GoRoute(
       path: '/consult/:announcementId',
@@ -92,38 +104,6 @@ class _MatchingDetailPlaceholder extends StatelessWidget {
   }
 }
 
-class _OnboardingPlaceholder extends StatelessWidget {
-  const _OnboardingPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text('온보딩 (준비 중)')),
-    );
-  }
-}
-
-class _RegisterPlaceholder extends StatelessWidget {
-  const _RegisterPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text('등록 (준비 중)')),
-    );
-  }
-}
-
-class _ProfileEditPlaceholder extends StatelessWidget {
-  const _ProfileEditPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text('프로필 편집 (준비 중)')),
-    );
-  }
-}
 
 class _ConsultPlaceholder extends StatelessWidget {
   const _ConsultPlaceholder({required this.announcementId});

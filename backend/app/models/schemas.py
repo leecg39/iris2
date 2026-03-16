@@ -35,6 +35,24 @@ class CompanyProfile(BaseModel):
     tech_keywords: list[str] = Field(default_factory=list, description="기술 키워드")
 
 
+class CompanyProfileUpdate(BaseModel):
+    """기업 프로필 업데이트 요청."""
+
+    business_number: str = Field(
+        ...,
+        min_length=10,
+        max_length=12,
+        description="사업자등록번호 (10자리, 하이픈 포함 가능)",
+        examples=["123-45-67890"],
+    )
+    research_fields: Optional[list] = Field(
+        None, description="연구 분야 (None이면 변경 안 함)"
+    )
+    tech_keywords: Optional[list] = Field(
+        None, description="기술 키워드 (None이면 변경 안 함)"
+    )
+
+
 # --- Announcement ---
 
 class AnnouncementResponse(BaseModel):
