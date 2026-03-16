@@ -4,7 +4,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iris/features/home/home_screen.dart';
-import 'package:iris/features/matching/matching_screen.dart';
+import 'package:iris/features/matching/matching_list_screen.dart';
+import 'package:iris/features/matching/announcement_detail_screen.dart';
 import 'package:iris/features/onboarding/onboarding_screen.dart';
 import 'package:iris/features/profile/profile_edit_screen.dart';
 import 'package:iris/features/profile/register_screen.dart';
@@ -36,13 +37,13 @@ final appRouter = GoRouter(
         ),
         GoRoute(
           path: '/matching',
-          builder: (context, state) => const MatchingScreen(),
+          builder: (context, state) => const MatchingListScreen(),
           routes: [
             GoRoute(
               path: ':id',
               builder: (context, state) {
                 final id = state.pathParameters['id'] ?? '';
-                return _MatchingDetailPlaceholder(id: id);
+                return AnnouncementDetailScreen(id: id);
               },
             ),
           ],
@@ -88,22 +89,6 @@ final appRouter = GoRouter(
     ),
   ],
 );
-
-// 하위 라우트 Placeholder 화면들
-
-class _MatchingDetailPlaceholder extends StatelessWidget {
-  const _MatchingDetailPlaceholder({required this.id});
-  final String id;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('매칭 상세 - $id')),
-      body: const Center(child: Text('매칭 상세 (준비 중)')),
-    );
-  }
-}
-
 
 class _ConsultPlaceholder extends StatelessWidget {
   const _ConsultPlaceholder({required this.announcementId});
