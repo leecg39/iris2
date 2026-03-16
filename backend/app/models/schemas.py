@@ -140,6 +140,29 @@ class ConsultRequest(BaseModel):
     message: Optional[str] = Field(None, max_length=1000)
 
 
+class ConsultSubmitRequest(BaseModel):
+    """상담 신청 요청 (POST /api/v1/consultation/submit)."""
+
+    company_id: str = Field(..., description="기업 페이지 ID")
+    announcement_id: str = Field(..., description="공고 페이지 ID")
+    requester_name: str = Field(..., min_length=1, max_length=50, description="신청자 이름")
+    email: EmailStr = Field(..., description="신청자 이메일")
+    phone: str = Field(
+        ...,
+        pattern=r"^01[016789]-?\d{3,4}-?\d{4}$",
+        description="휴대폰 번호",
+    )
+    message: str = Field(..., max_length=1000, description="상담 요청 메시지")
+
+
+class ConsultSubmitResponse(BaseModel):
+    """상담 신청 응답."""
+
+    id: str = Field(..., description="생성된 상담 페이지 ID")
+    status: str = Field(default="접수", description="신청 상태")
+    email_sent: bool = Field(..., description="확인 이메일 발송 여부")
+
+
 # --- Report ---
 
 class ReportResponse(BaseModel):
@@ -150,3 +173,12 @@ class ReportResponse(BaseModel):
     match_score: float = Field(..., ge=0, le=100)
     pdf_url: Optional[str] = None
     created_at: datetime
+
+
+class ReportListResponse(BaseModel):
+    """리포트 목록 페이지네이션 응답."""
+
+    items: list[ReportResponse]
+    total: int
+    page: int
+    page_size: int
