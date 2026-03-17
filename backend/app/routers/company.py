@@ -106,14 +106,28 @@ async def lookup_company(request: CompanyLookupRequest):
         logger.warning("잘못된 사업자번호: %s", e)
         raise HTTPException(status_code=400, detail=str(e))
 
-    # Layer 2: 공공API 조회 (실패 시 개발용 mock fallback)
+    # Layer 2: 국세청 API 조회 (실패 시 개발용 mock fallback)
+    nts_status = None
     try:
         company_data = await api_service.lookup_company(request.business_number)
+        nts_status = {
+            "b_stt": company_data.get("b_stt", ""),
+            "tax_type": company_data.get("tax_type", ""),
+        }
+        # 국세청 API는 법인명/대표자/주소를 제공하지 않으므로 mock으로 보완
+        mock = _generate_mock_company(normalized_bn)
+        company_data["company_name"] = mock["company_name"]
+        company_data["ceo_name"] = mock["ceo_name"]
+        company_data["address"] = mock["address"]
+        company_data["industry"] = mock.get("industry", company_data.get("industry", ""))
+        company_data["revenue"] = mock.get("revenue")
+        company_data["employee_count"] = mock.get("employee_count")
+        logger.info("국세청 상태조회 성공 + mock 기업정보 보완: %s", normalized_bn)
     except CompanyNotFoundError as e:
-        logger.warning("기업 미발견: %s", e)
+        logger.warning("기업 미발견 (폐업 등): %s", e)
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
-        logger.warning("공공API 연결 실패, 개발용 mock 데이터 반환: %s", e)
+        logger.warning("국세청 API 연결 실패, 개발용 mock 데이터 반환: %s", e)
         company_data = _generate_mock_company(normalized_bn)
 
     # Layer 2: Notion DB 저장

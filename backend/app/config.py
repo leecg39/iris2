@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     smtp_user: str = ""
     smtp_password: str = ""
 
+    # 공공데이터포털 (data.go.kr)
+    data_go_kr_api_key: str = ""
+
     # IRIS
     iris_base_url: str = "https://www.iris.go.kr"
     scrape_delay: float = 1.0

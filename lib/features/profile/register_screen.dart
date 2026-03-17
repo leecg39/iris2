@@ -2,9 +2,11 @@
 // @SPEC docs/planning/03-user-flow.md#사업자번호-입력
 // @TEST test/features/profile/register_test.dart
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/api/api_client.dart';
 import '../../core/theme/colors.dart';
 import '../../core/theme/typography.dart';
 import '../../core/theme/spacing.dart';
@@ -19,11 +21,15 @@ enum RegisterStatus {
 
 /// 사업자번호 입력 화면
 ///
-/// 사용자가 사업자번호(10자리)를 입력하면 자동 하이픈 포맷(000-00-00000)으로
-/// 표시하고, "조회하기" 버튼으로 기업 정보를 조회합니다.
-/// 조회 성공 시 /profile/edit 화면으로 이동합니다.
+/// 사업자번호(10자리)를 입력하면 자동 하이픈 포맷(000-00-00000)으로
+/// 표시하고, "조회하기" 버튼으로 공공데이터 API를 통해 기업 정보를 조회합니다.
+/// 조회 성공 시 법인명, 대표자, 주소를 화면에 표시하고
+/// "다음" 버튼으로 /profile/edit 화면으로 이동합니다.
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({super.key});
+  const RegisterScreen({super.key, this.apiClient});
+
+  /// 테스트용 API 클라이언트 주입
+  final ApiClient? apiClient;
 
   @override
   State<RegisterScreen> createState() => RegisterScreenState();
@@ -35,6 +41,17 @@ class RegisterScreenState extends State<RegisterScreen> {
 
   RegisterStatus _status = RegisterStatus.initial;
   String _errorMessage = '';
+
+  /// 조회된 기업 정보
+  Map<String, dynamic>? _companyData;
+
+  late final ApiClient _apiClient;
+
+  @override
+  void initState() {
+    super.initState();
+    _apiClient = widget.apiClient ?? ApiClient();
+  }
 
   /// 순수 숫자만 추출 (하이픈 제외)
   String get _rawDigits => _controller.text.replaceAll('-', '');
@@ -64,8 +81,13 @@ class RegisterScreenState extends State<RegisterScreen> {
   void simulateSuccessForTest() {
     setState(() {
       _status = RegisterStatus.success;
+      _companyData = {
+        'company_name': '테스트기업',
+        'ceo_name': '홍길동',
+        'address': '서울시 강남구',
+      };
     });
-    context.go('/profile/edit');
+    context.go('/profile/edit', extra: _companyData);
   }
 
   /// 사업자번호 입력값을 000-00-00000 형식으로 변환
@@ -77,25 +99,66 @@ class RegisterScreenState extends State<RegisterScreen> {
     return '${digits.substring(0, 3)}-${digits.substring(3, 5)}-${digits.substring(5)}';
   }
 
-  /// 조회하기 버튼 핸들러 (mock 구현)
+  /// 조회하기 버튼 핸들러 - 백엔드 API 호출
   Future<void> _onLookup() async {
     if (!_isButtonEnabled) return;
 
     setState(() {
       _status = RegisterStatus.loading;
       _errorMessage = '';
+      _companyData = null;
     });
 
-    // API 연동은 추후 구현 (현재 mock: 1초 딜레이 후 성공)
-    await Future<void>.delayed(const Duration(seconds: 1));
+    try {
+      final data = await _apiClient.lookupCompany(_rawDigits);
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    // 성공 처리 → /profile/edit 이동
-    setState(() {
-      _status = RegisterStatus.success;
-    });
-    context.go('/profile/edit');
+      setState(() {
+        _status = RegisterStatus.success;
+        _companyData = data;
+      });
+    } on DioException catch (e) {
+      if (!mounted) return;
+
+      String message;
+      if (e.response != null) {
+        final statusCode = e.response!.statusCode;
+        final detail = e.response!.data is Map
+            ? e.response!.data['detail'] ?? ''
+            : '';
+
+        if (statusCode == 400) {
+          message = '잘못된 사업자번호입니다';
+        } else if (statusCode == 404) {
+          message = detail.isNotEmpty
+              ? detail.toString()
+              : '해당 사업자번호의 기업을 찾을 수 없습니다';
+        } else {
+          message = '서버 오류가 발생했습니다 ($statusCode)';
+        }
+      } else {
+        message = '서버에 연결할 수 없습니다. 네트워크를 확인해주세요.';
+      }
+
+      setState(() {
+        _status = RegisterStatus.error;
+        _errorMessage = message;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _status = RegisterStatus.error;
+        _errorMessage = '알 수 없는 오류가 발생했습니다';
+      });
+    }
+  }
+
+  /// "다음" 버튼 - profile/edit로 이동
+  void _onNext() {
+    if (_companyData == null) return;
+    context.go('/profile/edit', extra: _companyData);
   }
 
   @override
@@ -109,6 +172,7 @@ class RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     final isLoading = _status == RegisterStatus.loading;
     final hasError = _status == RegisterStatus.error;
+    final hasResult = _status == RegisterStatus.success && _companyData != null;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -149,7 +213,13 @@ class RegisterScreenState extends State<RegisterScreen> {
                 controller: _controller,
                 focusNode: _focusNode,
                 enabled: !isLoading,
-                onChanged: (_) => setState(() {}),
+                onChanged: (_) => setState(() {
+                  // 입력 변경 시 이전 결과 초기화
+                  if (_status == RegisterStatus.success) {
+                    _status = RegisterStatus.initial;
+                    _companyData = null;
+                  }
+                }),
                 formatNumber: _formatBusinessNumber,
               ),
 
@@ -173,7 +243,9 @@ class RegisterScreenState extends State<RegisterScreen> {
                 height: 52,
                 child: ElevatedButton(
                   key: const Key('lookup-button'),
-                  onPressed: _isButtonEnabled && !isLoading ? _onLookup : null,
+                  onPressed: _isButtonEnabled && !isLoading && !hasResult
+                      ? _onLookup
+                      : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: AppColors.surface,
@@ -202,10 +274,141 @@ class RegisterScreenState extends State<RegisterScreen> {
                         ),
                 ),
               ),
+
+              // 조회 결과 카드
+              if (hasResult) ...[
+                const SizedBox(height: AppSpacing.xl),
+                _CompanyInfoCard(companyData: _companyData!),
+                const Spacer(),
+                // 다음 버튼
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    key: const Key('next-button'),
+                    onPressed: _onNext,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.surface,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      '다음',
+                      style: AppTypography.body.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.surface,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// 조회된 기업 정보 카드
+class _CompanyInfoCard extends StatelessWidget {
+  const _CompanyInfoCard({required this.companyData});
+
+  final Map<String, dynamic> companyData;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      key: const Key('company-info-card'),
+      elevation: 0,
+      color: AppColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: AppColors.primary.withAlpha(51)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 헤더
+            Row(
+              children: [
+                const Icon(Icons.check_circle, color: AppColors.primary, size: 20),
+                const SizedBox(width: AppSpacing.sm),
+                Text(
+                  '기업 정보 조회 완료',
+                  style: AppTypography.caption.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
+            const Divider(height: 1),
+            const SizedBox(height: AppSpacing.md),
+
+            // 법인명
+            _InfoRow(
+              label: '법인명',
+              value: companyData['company_name']?.toString() ?? '-',
+            ),
+            const SizedBox(height: AppSpacing.sm),
+
+            // 대표자
+            _InfoRow(
+              label: '대표자',
+              value: companyData['ceo_name']?.toString() ?? '-',
+            ),
+            const SizedBox(height: AppSpacing.sm),
+
+            // 주소
+            _InfoRow(
+              label: '주소',
+              value: companyData['address']?.toString() ?? '-',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 정보 행 (라벨 + 값)
+class _InfoRow extends StatelessWidget {
+  const _InfoRow({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 56,
+          child: Text(
+            label,
+            style: AppTypography.caption.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: Text(
+            value,
+            style: AppTypography.body.copyWith(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

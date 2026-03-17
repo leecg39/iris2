@@ -69,16 +69,20 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/profile/edit',
-      builder: (context, state) => const ProfileEditScreen(
-        companyData: ProfileCompanyData(
-          companyName: '',
-          ceoName: '',
-          industry: '',
-          revenue: 0,
-          employeeCount: 0,
-          address: '',
-        ),
-      ),
+      builder: (context, state) {
+        final extra = state.extra;
+        final data = extra is Map<String, dynamic> ? extra : <String, dynamic>{};
+        return ProfileEditScreen(
+          companyData: ProfileCompanyData(
+            companyName: data['company_name']?.toString() ?? '',
+            ceoName: data['ceo_name']?.toString() ?? '',
+            industry: data['industry']?.toString() ?? '',
+            revenue: (data['revenue'] as num?)?.toInt() ?? 0,
+            employeeCount: (data['employee_count'] as num?)?.toInt() ?? 0,
+            address: data['address']?.toString() ?? '',
+          ),
+        );
+      },
     ),
     GoRoute(
       path: '/consult/:announcementId',
